@@ -66,7 +66,20 @@ print(get_runner(id = "687094"))
     'country_ranking': '1 / 66 388',
     'age_group_world_ranking': '1 / 388 149',
     'age_group_continent_ranking': '1 / 244 566',
-    'age_group_country_ranking': '1 / 7 713'
+    'age_group_country_ranking': '1 / 7 713',
+    'results': [
+        {
+            'date': '2024-07-06',
+            'name_of_the_race': 'RESTONICA TRAIL by UTMB® - Tavignanu Trail',
+            'race_id': '91783',
+            'country': 'France',
+            'distance': 32,
+            'elevation_gain': 2270,
+            'time': '3:06:01',
+            'ranking': '1 / 778',
+            'ranking_gender': '1 / 593',
+            'race_score': '942'   
+    }, ...]
 }
 ```
 
@@ -75,3 +88,5 @@ print(get_runner(id = "687094"))
 | Key       | Type       | Default     | Description                                                      |
 |-----------|------------|-------------|-----------------------------------------------------|
 | id        | string |  | Runner ITRA ID |
+
+#### To obtain the race_score value, set the COOKIE value in the env.py file to the one associated with a registered user who has an ITRA Subscription.

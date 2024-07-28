@@ -3,7 +3,8 @@ from bs4 import BeautifulSoup
 from env import *
 
 headers = {
-    "User-Agent": USER_AGENT        
+    "User-Agent": USER_AGENT,
+    "Cookie": COOKIE        
 }
 
 def get_request(url, request_type = "GET", response_type = "text", form_data = {}):
@@ -18,8 +19,6 @@ def get_request(url, request_type = "GET", response_type = "text", form_data = {
     return BeautifulSoup(r.content, 'html.parser') 
 
 def get_runners(start = 1, count = 100, gender = "", distance_id = 0, rating_min = 0, rating_max = 1000, age_group = "", continent_id = "", country_code = ""):
-    url = "https://itra.run/api/runner/runnerrank"
-
     form_data = {
         "start": start,
         "count": count,
@@ -32,10 +31,10 @@ def get_runners(start = 1, count = 100, gender = "", distance_id = 0, rating_min
         "countryCode": country_code
     }
 
-    return get_request(url, "POST", "json", form_data)
+    return get_request(RUNNERS_URL, "POST", "json", form_data)
 
 def get_runner(id):
-    url = f"https://itra.run/RunnerSpace/{id}"
+    url = f"{RUNNER_ABOUT_URL}{id}"
 
     soup = get_request(url)
     runner = {}
@@ -56,7 +55,7 @@ def get_runner(id):
     runner['best_race_score'] = int(soup.select_one("body > div:nth-child(2) > div > main > div:nth-child(4) > div:nth-child(2) > div:nth-child(2) > div > div > table > tbody > tr:nth-child(2) > td:nth-child(2)").text)
     runner['races_finished'] = soup.select_one("body > div:nth-child(2) > div > main > div:nth-child(4) > div:nth-child(2) > div:nth-child(2) > div > div > table > tbody > tr:nth-child(3) > td:nth-child(2)").text.strip()
 
-    runner_ranking = get_request("https://itra.run/api/Runner/RefreshRunnerPiGeneralStats", "POST", "json", {"runnerId": id})
+    runner_ranking = get_request(RUNNER_PI_STATS_URL, "POST", "json", {"runnerId": id})
 
     runner['world_ranking_percentage'] = float(runner_ranking["worldRankingPercentage"])
     runner['world_ranking'] = runner_ranking["worldRanking"]
@@ -65,5 +64,27 @@ def get_runner(id):
     runner['age_group_world_ranking'] = runner_ranking["ageGroupWorldRanking"]
     runner['age_group_continent_ranking'] = runner_ranking["ageGroupContinentRanking"]
     runner['age_group_country_ranking'] = runner_ranking["ageGroupCountryRanking"]
+
+    runner['results'] = []
+    results_url = f"{RUNNER_RACE_RESULTS_URL}{id}"
+    soup = get_request(results_url)
+
+    for year in soup.select("#runner-results-table"):
+        for result in year.select("tbody tr"):
+            result_data = {}
+            row = result.select("td")
+            result_data['date'] = row[0].text.strip()
+            result_data['name_of_the_race'] = row[1].text.strip()
+            result_data['race_id'] = row[1].find("a")['href'].split("/")[-1]
+            result_data['country'] = row[2].text.strip()
+            distance_text, elevation_gain_text = row[3].text.split("/")
+            result_data['distance'] = int(distance_text.replace("km", "").strip())
+            result_data['elevation_gain'] = int(elevation_gain_text.replace("m+", "").strip())
+            result_data['time'] = row[4].text.strip()
+            result_data['ranking'] = row[5].text.strip()
+            result_data['ranking_gender'] = row[6].text.strip()
+            result_data['race_score'] = row[7].text.strip()
+
+            runner['results'].append(result_data)
 
     return runner
