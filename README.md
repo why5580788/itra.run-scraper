@@ -42,3 +42,36 @@ print(get_runners())
 | age_group    | string  | | The age group of the runners. "" = Overall, M U18, F U18, M U20, F U20, M U23, F U23, M 23-34, F 23-34, M 35-39, F 35-39, M 40-44, F 40-44, M 45-49, F 45-49, M 50-54, F 50-54, M 55-59, F 55-59, M 60-64, F 60-64, M 65-69, F 65-69, M 70-74, F 70-74, M 75-79, F 75-79, M 80+, F 80+. |
 | continent_id | integer | | The continent ID for filtering the runners. "" = World, 1 = Africa, 2 = North America, 3 = South America, 4 = Asia, 5 = Europe, 6 = Oceania, 99 = Other |
 | country_code | string  | | The country code for filtering the runners.|
+
+
+### Runner Scraping
+
+```python
+from itra_scraper import get_runner
+print(get_runner(id = "687094"))
+
+{
+    'name': 'Remi BONNET',
+    'performance_index': 956,
+    'country': 'Switzerland',
+    'age_group': 'M 23-34',
+    'age': 29,
+    'club': 'Salomon',
+    'sponsor': 'Salomon | RedBull',
+    'best_race_score': 970,
+    'races_finished': '36/39',
+    'world_ranking_percentage': 100.0,
+    'world_ranking': '1 / 2 993 150',
+    'continent_ranking': '1 / 1 833 058',
+    'country_ranking': '1 / 66 388',
+    'age_group_world_ranking': '1 / 388 149',
+    'age_group_continent_ranking': '1 / 244 566',
+    'age_group_country_ranking': '1 / 7 713'
+}
+```
+
+#### Parameters:
+
+| Key       | Type       | Default     | Description                                                      |
+|-----------|------------|-------------|-----------------------------------------------------|
+| id        | string |  | Runner ITRA ID |
