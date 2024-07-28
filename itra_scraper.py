@@ -6,19 +6,16 @@ headers = {
     "User-Agent": USER_AGENT        
 }
 
-def get_json(url, request_type = "GET", form_data = {}):
+def get_request(url, request_type = "GET", response_type = "text", form_data = {}):
     if request_type == "POST":
         r = requests.post(url, headers=headers, data=form_data)
     else:
         r = requests.get(url, headers=headers)
-    return r.json()
 
-def get_soup(url, request_type = "GET"):
-    if request_type == "POST":
-        r = requests.post(url, headers=headers)
-    else:
-        r = requests.get(url, headers=headers)
-    return BeautifulSoup(r.content, 'html.parser')
+    if response_type == "json":
+        return r.json()
+    
+    return BeautifulSoup(r.content, 'html.parser') 
 
 def get_runners(start = 1, count = 100, gender = "", distance_id = 0, rating_min = 0, rating_max = 1000, age_group = "", continent_id = "", country_code = ""):
     url = "https://itra.run/api/runner/runnerrank"
@@ -35,12 +32,12 @@ def get_runners(start = 1, count = 100, gender = "", distance_id = 0, rating_min
         "countryCode": country_code
     }
 
-    return get_json(url, "POST", form_data)
+    return get_request(url, "POST", "json", form_data)
 
 def get_runner(id):
     url = f"https://itra.run/RunnerSpace/{id}"
 
-    soup = get_soup(url)
+    soup = get_request(url)
     runner = {}
 
     runner['name'] = soup.select_one(".runner-name h1").text.strip()
@@ -59,7 +56,7 @@ def get_runner(id):
     runner['best_race_score'] = int(soup.select_one("body > div:nth-child(2) > div > main > div:nth-child(4) > div:nth-child(2) > div:nth-child(2) > div > div > table > tbody > tr:nth-child(2) > td:nth-child(2)").text)
     runner['races_finished'] = soup.select_one("body > div:nth-child(2) > div > main > div:nth-child(4) > div:nth-child(2) > div:nth-child(2) > div > div > table > tbody > tr:nth-child(3) > td:nth-child(2)").text.strip()
 
-    runner_ranking = get_json("https://itra.run/api/Runner/RefreshRunnerPiGeneralStats", "POST", {"runnerId": id})
+    runner_ranking = get_request("https://itra.run/api/Runner/RefreshRunnerPiGeneralStats", "POST", "json", {"runnerId": id})
 
     runner['world_ranking_percentage'] = float(runner_ranking["worldRankingPercentage"])
     runner['world_ranking'] = runner_ranking["worldRanking"]
