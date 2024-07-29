@@ -4,6 +4,7 @@
 
 Just import **itra_scraper** and call functions!
 
+#### To obtain the race_score value, set the COOKIE value in the env.py file to the one associated with a registered user who has an ITRA Subscription.
 
 ### Runners Scraping
 
@@ -89,4 +90,93 @@ print(get_runner(id = "687094"))
 |-----------|------------|-------------|-----------------------------------------------------|
 | id        | string |  | Runner ITRA ID |
 
-#### To obtain the race_score value, set the COOKIE value in the env.py file to the one associated with a registered user who has an ITRA Subscription.
+### Runner Scraping
+
+```python
+from itra_scraper import get_runner
+print(get_runner(id = "687094"))
+
+{
+    'name': 'Remi BONNET',
+    'performance_index': 956,
+    'country': 'Switzerland',
+    'age_group': 'M 23-34',
+    'age': 29,
+    'club': 'Salomon',
+    'sponsor': 'Salomon | RedBull',
+    'best_race_score': 970,
+    'races_finished': '36/39',
+    'world_ranking_percentage': 100.0,
+    'world_ranking': '1 / 2 993 150',
+    'continent_ranking': '1 / 1 833 058',
+    'country_ranking': '1 / 66 388',
+    'age_group_world_ranking': '1 / 388 149',
+    'age_group_continent_ranking': '1 / 244 566',
+    'age_group_country_ranking': '1 / 7 713',
+    'results': [
+        {
+            'date': '2024-07-06',
+            'name_of_the_race': 'RESTONICA TRAIL by UTMB® - Tavignanu Trail',
+            'race_id': '91783',
+            'country': 'France',
+            'distance': 32,
+            'elevation_gain': 2270,
+            'time': '3:06:01',
+            'ranking': '1 / 778',
+            'ranking_gender': '1 / 593',
+            'race_score': '942'   
+    }, ...]
+}
+```
+
+#### Parameters:
+
+| Key       | Type       | Default     | Description                                                      |
+|-----------|------------|-------------|-----------------------------------------------------|
+| id        | string |  | Runner ITRA ID |
+
+### Race Scraping
+
+```python
+from itra_scraper import get_race
+print(get_race(id = "91783"))
+
+{
+    'event_name': 'RESTONICA TRAIL by UTMB® 2024',
+    'race_name': 'Tavignanu Trail',
+    'itra_points': 2,
+    'mountain_level': 8,
+    'finisher_level': 230,
+    'date': '2024-07-06',
+    'start_time': '06:30:00',
+    'participation': 'Solo',
+    'distance': 32.9,
+    'elevation_gain': 2270,
+    'elevation_loss': 2280,
+    'time_limit': '11:0:0',
+    'number_of_aid_stations': 3,
+    'number_of_participants': 600,
+    'about_the_race': 'Venez découvrir dans une ambiance des plus conviviales les lieux d’estive de la montagne corse en longeant la magnifique vallée du Tavignanu, tantôt au fond des gorges, tantôt sur les crêtes et admirez au passage l’Arche des Scandulagjhu (les ouvriers qui découpaient les bardeaux, espèces de tuile en bois servant à protéger les bergeries), respirez l’odeur des cistes et celle des pins laricio, fréquentez les stazzi (bergeries) qui vous accueillent pour les ravitaillements, … Come and discover in a very friendly atmosphere the summer places of the Corsican mountains along the beautiful valley of the Tavignanu, sometimes at the bottom of the gorges, sometimes on the ridges and admire in passing the Ark of the Scandulagjhu (the workers who cut the shingles, species of wooden tile used to protect sheepfolds), breathe the smell of cysts and laricio pines, frequent the stazzi (sheepfolds) that welcome you for supplies,…',
+    'start_location': 'Corte, France',
+    'finish_location': 'Corte, France',
+    'type_of_terrain': '95% Paths / 4% Tracks / 1% Roads',
+    'trace_de_trail_url': 'https://tracedetrail.fr/fr/trace/248931',
+    'results': [
+        {
+            'place': '1',
+            'name': 'BONNET Remi',
+            'runner_id': '687094',
+            'time': '3:06:01',
+            'race_score': '942',
+            'age': 29,
+            'gender': 'H',
+            'nationality': 'SUI'
+    }, ...] 
+} 
+```
+
+#### Parameters:
+
+| Key       | Type       | Default     | Description                                                      |
+|-----------|------------|-------------|-----------------------------------------------------|
+| id        | string |  | Race ITRA ID |

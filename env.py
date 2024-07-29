@@ -5,3 +5,7 @@ RUNNERS_URL = "https://itra.run/api/runner/runnerrank"
 RUNNER_ABOUT_URL = "https://itra.run/RunnerSpace/"
 RUNNER_PI_STATS_URL = "https://itra.run/api/Runner/RefreshRunnerPiGeneralStats"
 RUNNER_RACE_RESULTS_URL = "https://itra.run/RunnerSpace/RaceResults/"
+
+RACE_DETAILS_URL = "https://itra.run/Races/RaceDetails/"
+RACE_COURSE_URL = "https://itra.run/Races/RaceCourse/"
+RACE_RESULTS_URL = "https://itra.run/Races/RaceResults/"

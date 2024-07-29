@@ -88,3 +88,78 @@ def get_runner(id):
             runner['results'].append(result_data)
 
     return runner
+
+def get_race(id):
+    url = f"{RACE_DETAILS_URL}{id}"
+
+    soup = get_request(url)
+    race = {}
+
+    race['event_name'] = soup.select_one("body > div:nth-child(2) > div.discover-trail-running > div > div > div > div > div > div:nth-child(2) > div.col-lg-7 > h1").text.strip()
+
+    race['race_name'] = soup.select_one("body > div:nth-child(2) > div.container.border.border-dark.mb-4 > div:nth-child(2) > div.col-lg-5 > div:nth-child(2) > div > h3").text.strip()
+    race['itra_points'] = int(soup.select_one("body > div:nth-child(2) > div.container.border.border-dark.mb-4 > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2) > div > img")['alt'].strip())
+    race['mountain_level'] = int(soup.select_one("body > div:nth-child(2) > div.container.border.border-dark.mb-4 > div:nth-child(2) > div:nth-child(3) > div > div:nth-child(2) > div > div > span:nth-child(2)").text.strip())
+    race['finisher_level'] = int(soup.select_one("body > div:nth-child(2) > div.container.border.border-dark.mb-4 > div:nth-child(2) > div:nth-child(4) > div > div:nth-child(2) > div > div > span:nth-child(2)").text.strip())
+
+    race['date'] = soup.select_one("#rdetails > div:nth-child(2) > div:nth-child(1) > span").text.replace("/", "-").strip()
+    race['start_time'] = soup.select_one("#rdetails > div:nth-child(2) > div:nth-child(2) > span").text.strip()
+    race['participation'] = soup.select_one("#rdetails > div:nth-child(2) > div:nth-child(3) > span").text.strip()
+
+    race['distance'] = float(soup.select_one("#rdetails > div:nth-child(3) > div:nth-child(1) > span").text.strip())
+    race['elevation_gain'] = int(soup.select_one("#rdetails > div:nth-child(3) > div:nth-child(2) > span").text.replace("+", "").strip())
+    race['elevation_loss'] = int(soup.select_one("#rdetails > div:nth-child(3) > div:nth-child(3) > span").text.replace("-", "").strip())
+
+    race['time_limit'] = soup.select_one("#rdetails > div:nth-child(4) > div:nth-child(1) > span").text.strip()
+    race['number_of_aid_stations'] = int(soup.select_one("#rdetails > div:nth-child(4) > div:nth-child(2) > span").text.strip())
+    race['number_of_participants'] = int(soup.select_one("#rdetails > div:nth-child(4) > div:nth-child(3) > span").text.strip())
+
+    race["about_the_race"] = soup.select_one("#rdetails > div:nth-child(7) > div").text.replace("\n", " ").strip()
+
+    url = f"{RACE_COURSE_URL}{id}"
+    soup = get_request(url)
+
+    race["start_location"] = soup.select_one("#rresults > div:nth-child(2) > div:nth-child(1) > h4").text.replace("Start Location:", "").strip()
+    race["finish_location"] = soup.select_one("#rresults > div:nth-child(2) > div:nth-child(2) > h4").text.replace("Finish Location:", "").strip()
+    race["type_of_terrain"] = soup.select_one("#rresults > div:nth-child(3) > div > h4").text.replace("Type of Terrain:", "").strip()
+    race["trace_de_trail_url"] = soup.select_one("#rresults div.race-course-btn > a")['href']
+
+    url = f"{RACE_RESULTS_URL}{id}"
+    soup = get_request(url)
+    race["results"] = []
+
+    has_subscription = True
+
+    for row in soup.select("#RunnerRaceResults > tr"):
+        result = {}
+        td = row.select("td")
+
+        result['place'] = td[0].text.strip()
+        result['name'] = td[1].text.strip()
+        result['runner_id'] = td[1].find("a")["href"].split("/")[-1]
+        result['time'] = td[2].text.strip()
+
+        if (has_subscription):
+            result['race_score'] = td[3].text.strip()
+            try:
+                result['age'] = int(td[4].text.strip())
+            except:
+                result['age'] = None
+            result['gender'] = td[5].text.strip()
+            result['nationality'] = td[6].text.strip()
+        else:
+            result['race_score'] = "Subscription is needed"
+            try:
+                result['age'] = int(td[3].text.strip())
+            except:
+                result['age'] = None
+            result['gender'] = td[4].text.strip()
+            result['nationality'] = td[5].text.strip()
+
+        if len(td[3].select(".itra-green-bgr")) > 0:
+            has_subscription = False
+            result['race_score'] = "Subscription is needed"
+
+        race["results"].append(result)
+
+    return race
